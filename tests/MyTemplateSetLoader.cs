@@ -1,9 +1,6 @@
-using System;
-using System.Resources;
 using NUnit.Framework;
-using VersionOne.Localization;
 
-namespace VersionOne.Tests.LocalizationTests
+namespace VersionOne.Localization.Tests
 {
 	internal class MyTemplateSetLoader : ITemplateSetLoader
 	{

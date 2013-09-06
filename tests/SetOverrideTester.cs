@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
-using VersionOne.Localization;
 
-namespace VersionOne.Tests.LocalizationTests
+namespace VersionOne.Localization.Tests
 {
 	public class SetOverrideTesterBase
 	{
