@@ -1,0 +1,6 @@
+; Rename Story
+Story=Backlog Item
+
+; Deliberately remove the definition of Plural'Story
+Plural'Story=
+

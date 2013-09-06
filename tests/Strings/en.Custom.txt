@@ -1,0 +1,7 @@
+; Override the Delete Command
+Command'Delete=Remove {Plural'2}
+
+; Yet another level of override
+Story=PBI
+
+DEF=MNO
