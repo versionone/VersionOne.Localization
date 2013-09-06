@@ -47,6 +47,7 @@
     <Compile Include="LocalizerTester.cs" />
     <Compile Include="MyTemplateSetLoader.cs" />
     <Compile Include="SetOverrideTester.cs" />
+    <Compile Include="TranslatorTester.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\source\VersionOne.Localization.csproj">
