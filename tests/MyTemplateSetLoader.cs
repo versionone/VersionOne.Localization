@@ -1,3 +1,4 @@
+using System.IO;
 using NUnit.Framework;
 
 namespace VersionOne.Localization.Tests
@@ -6,11 +7,10 @@ namespace VersionOne.Localization.Tests
 	{
 		public ITemplateSet Load(string culture, string setname)
 		{
-			string resourcename = string.Format("Strings.{0}.{1}.txt", culture, setname);
-			if (!ResourceLoader.Exists(resourcename, GetType()))
-				return null;
-			System.IO.TextReader reader = ResourceLoader.LoadClassText(resourcename, GetType());
-			return new TextTemplateSet(reader);
+			var classtype = GetType();
+			string resourcename = string.Format("{2}.Strings.{0}.{1}.txt", culture, setname, classtype.Namespace);
+			return classtype.Assembly.GetManifestResourceInfo(resourcename) == null ? null :
+				new TextTemplateSet(new StreamReader(classtype.Assembly.GetManifestResourceStream(resourcename)));
 		}
 	}
 

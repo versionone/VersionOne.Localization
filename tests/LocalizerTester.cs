@@ -161,10 +161,12 @@ namespace VersionOne.Localization.Tests
 			Assert.AreEqual("x y", loc.Resolve("A'B"));
 		}
 
+/*
 		[Test] public void DetermineKeys()
 		{
 			ListAssert.AreEqual(new[] { "A", "B" }, Localizer.DetermineKeys("blah $[A] blah $[B] blah", "$[", "]"));
 		}
+*/
 
 		[Test] public void EmptyBraces()
 		{
