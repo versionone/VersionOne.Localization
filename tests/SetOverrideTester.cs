@@ -7,7 +7,7 @@ namespace VersionOne.Localization.Tests
 	{
 		protected Localizer loc;
 
-		[SetUp] public void Setup ()
+		[TestFixtureSetUp] public void Setup ()
 		{
 			LocalizationManager mgr = new LocalizationManager("en", new MyTemplateSetLoader(), null, "Base");
 			loc = mgr.DefaultLocalizer;
@@ -58,7 +58,7 @@ namespace VersionOne.Localization.Tests
 	{
 		protected Localizer loc;
 
-		[SetUp] public void Setup ()
+		[TestFixtureSetUp] public void Setup ()
 		{
 			LocalizationManager mgr = new LocalizationManager("en", new MyTemplateSetLoader(), null, "Base", "Scrum");
 			loc = mgr.DefaultLocalizer;
@@ -94,7 +94,7 @@ namespace VersionOne.Localization.Tests
 	{
 		protected Localizer loc;
 
-		[SetUp] public void Setup ()
+		[TestFixtureSetUp] public void Setup ()
 		{
 			LocalizationManager mgr = new LocalizationManager("en", new MyTemplateSetLoader(), null, "Base", "Scrum", "Custom");
 			loc = mgr.DefaultLocalizer;
@@ -131,7 +131,7 @@ namespace VersionOne.Localization.Tests
 		protected LocalizationManager mgr;
 		protected Localizer loc;
 
-		[SetUp]
+		[TestFixtureSetUp]
 		public void Setup()
 		{
 			IDictionary<string, string> overrides = new Dictionary<string, string>();
