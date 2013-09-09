@@ -5,12 +5,7 @@ using System.Globalization;
 
 namespace VersionOne.Localization
 {
-	public interface ILocalizationManager 
-	{
-		Localizer GetLocalizer(string culture);
-	}
-
-	public class LocalizationManager : ILocalizationManager
+	public class LocalizationManager
 	{
 		private readonly CultureInfo _defaultculture;
 		private readonly ITemplateSetLoader _loader;
