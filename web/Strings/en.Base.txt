@@ -1,0 +1,16 @@
+;Comment=Lines starting with semicolon are ignored
+LongText=First line_
+Second line
+Plural={1}s
+Plural'Story=Stories
+Command={1} {2}
+Fixed=Never Change
+This==has==equal==signs=Equal-sign free
+
+TestDefault=Default English
+TestNeutral=Neutral English
+TestSpecific=Specific English
+
+XYZ=ABC {DEF} GHI
+DEF=JKL
+

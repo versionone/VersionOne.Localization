@@ -1,0 +1,2 @@
+TestNeutral=Neutral French
+TestSpecific=Specific French
