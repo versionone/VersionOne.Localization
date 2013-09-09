@@ -2,7 +2,7 @@ using System.IO;
 
 namespace VersionOne.Localization
 {
-	internal class FileTemplateSetLoader : ITemplateSetLoader
+	public class FileTemplateSetLoader : ITemplateSetLoader
 	{
 		private readonly string _path;
 
