@@ -4,41 +4,27 @@ VersionOne.Localization
 Components
 ----------
 
-```
-VersionOne.Localization.ILocalizerResolver
-```
 
-```
-VersionOne.Localization.Localizer
-```
+### VersionOne.Localization.ILocalizerResolver
 
-```
-VersionOne.Localization.LocalizationManager
-```
+### VersionOne.Localization.Localizer
 
-```
-VersionOne.Localization.ITemplateSet
-```
+### VersionOne.Localization.LocalizationManager
 
-```
-VersionOne.Localization.TextTemplateSet
-```
+### VersionOne.Localization.ITemplateSet
 
-```
-VersionOne.Localization.Localizer
-```
+### VersionOne.Localization.TextTemplateSet
 
-```
-VersionOne.Localization.ITemplateSetLoader
-```
+### VersionOne.Localization.Localizer
 
-```
-VersionOne.Localization.FileTemplateSetLoader
-```
+### VersionOne.Localization.ITemplateSetLoader
 
-WebLocalizer Sample Implementation
+### VersionOne.Localization.FileTemplateSetLoader
+
+Sample Web Application Implementation
 ----------------------------------
 
+### WebLocalizer
 
 Setting up current culture for each HTTP request, based on Accept-Language header sent by client browser.
 
