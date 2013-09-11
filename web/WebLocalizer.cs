@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Web;
 using VersionOne.Localization;
 
 namespace web
@@ -48,15 +47,8 @@ namespace web
 				return key;
 #endif
 			}
-#if DEBUG
-			if (IsLocalizationDisabled)
-				return key;
-#endif
+
 			return Loc.Resolve(key);
 		}
-
-#if DEBUG
-		private static bool IsLocalizationDisabled { get { return HttpContext.Current != null && HttpContext.Current.Request["noloc"] != null; } }
-#endif
 	}
 }

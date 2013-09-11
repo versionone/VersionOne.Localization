@@ -1,11 +1,13 @@
 ﻿using System.Globalization;
 using System.Threading;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using VersionOne.Localization;
 
 namespace web
 {
-	public class Global : System.Web.HttpApplication
+	public class Global : HttpApplication
 	{
 		public static void RegisterRoutes(RouteCollection routes)
 		{
@@ -25,10 +27,16 @@ namespace web
 
 			RegisterRoutes(RouteTable.Routes);
 
-			Localizer = new WebLocalizer(Server.MapPath("~/Strings"));
+			_localizer = new WebLocalizer(Server.MapPath("~/Strings"));
 		}
 
-		internal static WebLocalizer Localizer;
+		private static WebLocalizer _localizer;
+		internal static ILocalizerResolver Localizer
+		{
+			get { return IsLocalizationDisabled ? (ILocalizerResolver) new NoopLocalizer() : _localizer; }
+		}
+
+		private static bool IsLocalizationDisabled { get { return HttpContext.Current != null && HttpContext.Current.Request["noloc"] != null; } }
 
 		protected void Application_BeginRequest()
 		{
@@ -43,6 +51,14 @@ namespace web
 			}
 			Thread.CurrentThread.CurrentCulture = culture;
 			Thread.CurrentThread.CurrentUICulture = culture;
+		}
+	}
+
+	internal class NoopLocalizer : ILocalizerResolver
+	{
+		public string Resolve(string tag)
+		{
+			return tag;
 		}
 	}
 }
