@@ -57,6 +57,7 @@
     <Content Include="Strings\en-GB.Base.txt" />
     <Content Include="Strings\en-US.Base.txt" />
     <Content Include="Strings\en.Base.txt" />
+    <Content Include="Strings\en.Custom.txt" />
     <Content Include="Strings\fr-FR.Base.txt" />
     <Content Include="Strings\fr.Base.txt" />
     <Content Include="Web.config" />

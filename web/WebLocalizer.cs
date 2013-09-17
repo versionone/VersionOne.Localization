@@ -27,7 +27,7 @@ namespace web
 			_manager = null;
 		}
 
-		private readonly string[] _setnames = new[] { "Base", "Company" };
+		private readonly string[] _setnames = new[] { "Base", "Custom" };
 
 		private LocalizationManager Man 
 		{ 

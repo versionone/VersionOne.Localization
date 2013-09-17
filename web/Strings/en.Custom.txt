@@ -1,0 +1,4 @@
+Story=Backlog Item
+Plural'Story=
+Iteration=Sprint
+StoriesInCurrent={{0}} {Plural'Story} in current {1}
