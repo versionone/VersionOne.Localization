@@ -10,9 +10,34 @@ Translates client-supplied localization ```tag``` into its corresponding localiz
 
 ### VersionOne.Localization.Localizer
 
-Implements ```ILocalizerResolver``` interface.
+Implements ```ILocalizerResolver``` interface, caching localized output of each ```tag```. If current ```Localizer``` instance does not define a translation for a given ```tag```, it delegates resolution to a ```fallback``` instance configured via its constructor argument. If fallback localizer instance does not exist (as is in case of the default localizer instance), a ```Trim()```'ed text of the tag itself is cached and returned as its localized value.
+
+Each localization tag is treated as a stack of individual terms separated by tics ```'``` (terms themselves cannot contain tics). When translating a tag, ```Localizer``` attempts to resolve it from the most specific to the least specific form, until it finds a matching translation template defined. For example, translating a tag ```foo'bar'baz``` would cause the following resolution attempts until a matching translation template is found:
+
+* ```foo'bar'baz```
+* ```foo'bar```
+* ```foo```
+
+Translation template body can contain nested localizer tags enclosed in curly braces ```{``` ```}```. Curly braces must be doubled up ```{{``` ```}}``` in order to include them in translation output. Nested localizer tags can be literal, or built up out of current tag's terms by specifying their zero-based index. All localizer tags nested in a translation template are resolved against current ```Localizer``` instance, and their translated output is substituted in the result. Translation templates matching nested localizer tags can themselves nest other localizer tags, and are resolved recursively until no further nesting is encountered.
+
+For example, resolving ```StoriesInCurrent'Iteration``` tag against this set of translation templates
+
+```
+Story=Backlog Item
+Iteration=Sprint
+Plural={1}s
+StoriesInCurrent={{0}} {Plural'Story} in current {1}
+```
+
+produces ```{0} Backlog Items in current Sprint``` output.
+
+```Localizer``` maintains a map of tags and their corresponding translation templates. Map content is managed via ```Add()``` and ```Remove()``` methods.
+
+Please refer to https://github.com/versionone/VersionOne.Localization/blob/master/tests/LocalizerTester.cs for more information.
 
 ### VersionOne.Localization.LocalizationManager
+
+Please refer to https://github.com/versionone/VersionOne.Localization/blob/master/tests/SetOverrideTester.cs and https://github.com/versionone/VersionOne.Localization/blob/master/tests/CulturalTester.cs for more information.
 
 ### VersionOne.Localization.ITemplateSet
 
@@ -49,7 +74,7 @@ Sample Web Application Implementation
 
 ### WebLocalizer
 
-Localization service that implements ```ILocalizerResolver``` interface for a typical web application, normally configured as a singleton via DI container. It lazily creates an instance of ```LocalizationManager``` configured for ```en``` default culture with ```Base``` and ```Company``` template sets, and uses an instance of ```FileTemplateSetLoader``` to load localizer template sets from text files in a folder on disk specified by ```stringsPath``` constructor argument. It implements ```ILocalizerResolver.Resolve()``` method by delegating to a ```Localizer``` instance produced by ```LocalizationManager``` for the current UI culture specified via ```CultureInfo.CurrentUICulture```. It uses an instance of ```FileSystemWatcher``` configured to watch over localizer template set files under ```stringsPath``` folder, and discarding current ```LocalizationManager``` instance upon detecting any changes, thus allowing localization templates to be updated at run-time without a web application restart.
+Localization service that implements ```ILocalizerResolver``` interface for a typical web application, normally configured as a singleton via DI container. It lazily creates an instance of ```LocalizationManager``` configured for ```en``` default culture with ```Base``` and ```Custom``` template sets, and uses an instance of ```FileTemplateSetLoader``` to load localizer template sets from text files in a folder on disk specified by ```stringsPath``` constructor argument. It implements ```ILocalizerResolver.Resolve()``` method by delegating to a ```Localizer``` instance produced by ```LocalizationManager``` for the current UI culture specified via ```CultureInfo.CurrentUICulture```. It uses an instance of ```FileSystemWatcher``` configured to watch over localizer template set files under ```stringsPath``` folder, and discarding current ```LocalizationManager``` instance upon detecting any changes, thus allowing localization templates to be updated at run-time without a web application restart.
 
 ### NoopLocalizer
 
