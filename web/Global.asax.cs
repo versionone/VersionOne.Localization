@@ -30,10 +30,12 @@ namespace web
 			_localizer = new WebLocalizer(Server.MapPath("~/Strings"));
 		}
 
+		private static readonly ILocalizerResolver Noop = new NoopLocalizer();
+
 		private static WebLocalizer _localizer;
 		internal static ILocalizerResolver Localizer
 		{
-			get { return IsLocalizationDisabled ? (ILocalizerResolver) new NoopLocalizer() : _localizer; }
+			get { return IsLocalizationDisabled ? Noop : _localizer; }
 		}
 
 		private static bool IsLocalizationDisabled { get { return HttpContext.Current != null && HttpContext.Current.Request["noloc"] != null; } }
