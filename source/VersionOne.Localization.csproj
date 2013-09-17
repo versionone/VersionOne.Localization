@@ -40,6 +40,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="FileTemplateSetLoader.cs" />
     <Compile Include="LocalizationManager.cs" />
     <Compile Include="Localizer.cs" />
