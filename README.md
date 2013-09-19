@@ -1,6 +1,8 @@
 VersionOne.Localization
 =======================
 
+A lightweight, powerful, and flexible pattern-based localization library for .NET, supporting progressive refinement of translated output across multiple levels of locale definitions and functionality sets, translation adjustments performed in-the-field, and "hot" translation updates without application recompile or restart.
+
 Components
 ----------
 
@@ -33,11 +35,11 @@ produces `{0} Backlog Items in current Sprint` output.
 
 `Localizer` maintains a map of tags and their corresponding translation templates. Map content is managed via `Add()` and `Remove()` methods.
 
-Please refer to [tests/LocalizerTester.cs](https://github.com/versionone/VersionOne.Localization/blob/master/tests/LocalizerTester.cs) for more information.
+Please refer to [tests/LocalizerTester.cs] (tests/LocalizerTester.cs) for more information.
 
 ### VersionOne.Localization.LocalizationManager
 
-Please refer to [tests/SetOverrideTester.cs](https://github.com/versionone/VersionOne.Localization/blob/master/tests/SetOverrideTester.cs) and [tests/CultureTester.cs](https://github.com/versionone/VersionOne.Localization/blob/master/tests/CulturalTester.cs) for more information.
+Please refer to [tests/SetOverrideTester.cs] (tests/SetOverrideTester.cs) and [tests/CultureTester.cs] (tests/CulturalTester.cs) for more information.
 
 ### VersionOne.Localization.ITemplateSet
 
@@ -74,15 +76,15 @@ Sample Web Application Implementation
 
 ### WebLocalizer
 
-Localization service that implements `ILocalizerResolver` interface for a typical web application, normally configured as a singleton via a DI container. It lazily creates an instance of `LocalizationManager` configured for `en` default culture with `Base` and `Custom` template sets, and uses an instance of `FileTemplateSetLoader` to load localizer template sets from text files in a folder on disk specified by the `stringsPath` constructor argument. It implements the `ILocalizerResolver.Resolve()` method by delegating to a `Localizer` instance produced by `LocalizationManager` for the current UI culture specified via `CultureInfo.CurrentUICulture`. It uses an instance of `FileSystemWatcher` configured to watch over the localizer template set files under the folder specified by `stringsPath`. When one of these files changes, it discards the current `LocalizationManager` instance and rereads the template set files. **This feature allows you to update your allowing localization templates to be updated at run-time without a web application restart**.
+Localization service that implements `ILocalizerResolver` interface for a typical web application, normally configured as a singleton via a DI container. It lazily creates an instance of `LocalizationManager` configured for `en` default culture with `Base` and `Custom` template sets, and uses an instance of `FileTemplateSetLoader` to load localizer template sets from text files in a folder on disk specified by the `stringsPath` constructor argument. **A** `Custom` **template set allows your customers to adjust existing "canned"** `Base` **localization in the field as needed by overriding specific localization terms.** `WebLocalizer` implements the `ILocalizerResolver.Resolve()` method by delegating to a `Localizer` instance produced by `LocalizationManager` for the current UI culture specified via `CultureInfo.CurrentUICulture`. It uses an instance of `FileSystemWatcher` configured to watch over the localizer template set files under the folder specified by `stringsPath`. When one of these files changes, the current `LocalizationManager` instance is discarded, and the updated localizer template sets are re-loaded during subsequent lazy `LocalizationManager` instantiation. **This feature allows you to update your localization templates at run-time without a web application restart.**
 
 ### NoopLocalizer
 
-Implements a stub `ILocalizerResolver`, returning the original `tag` verbatim as localized output value.
+Implements an `ILocalizerResolver.Resolve()` stub, returning the original `tag` verbatim without localizing it.
 
 ### web application
 
-This sample web application uses a global variable to keep a singleton `WebLocalizer` instance (created by `Application_Start()` event handler) configured for the `Strings` folder under the current web application root.
+This sample web application uses a global variable to keep a singleton `WebLocalizer` instance (created by the `Application_Start()` event handler) configured for the `Strings` folder under the current web application root.
 
 Current culture is set up for each HTTP request by the `Application_BeginRequest()` event handler, based on `Accept-Language` header sent by the client browser.
 
