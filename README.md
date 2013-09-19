@@ -1,7 +1,7 @@
 VersionOne.Localization
 =======================
 
-A lightweight, powerful, and flexible pattern-based localization library for .NET, supporting progressive refinement of translated output across multiple levels of locale definitions and functionality sets, translation adjustments performed in-the-field, and "hot" translation updates without application recompile or restart.
+A lightweight, powerful, and flexible pattern-based localization library for .NET, supporting progressive refinement of translated output across multiple levels of culture definitions and functionality sets, translation adjustments performed in-the-field, and "hot" translation updates without application recompile or restart.
 
 Components
 ----------
@@ -20,7 +20,7 @@ Each localization tag is treated as a stack of individual terms separated by tic
 * `foo'bar`
 * `foo`
 
-Translation template bodies can contain nested localizer tags enclosed in curly braces `{` `}`. Curly braces must be doubled up `{{` `}}` in order to include them in translation output. Nested localizer tags can be literal, or built up out of the current tag's terms by specifying their zero-based index. All localizer tags nested in a translation template are resolved against the current `Localizer` instance, and their translated output is substituted in the result. Translation templates matching nested localizer tags can themselves nest other localizer tags, and are resolved recursively until no further nesting is encountered.
+Translation template bodies can contain nested localizer tags enclosed in curly braces `{` `}`. Curly braces must be doubled up `{{` `}}` in order to include them in translation output. Nested localizer tags can be literal, or built up out of the current tag's terms by specifying their zero-based index. All localizer tags nested in a translation template body are resolved against the current `Localizer` instance, and their translated output is substituted in the result. Translation template bodies matching nested localizer tags can themselves nest other localizer tags, and are resolved recursively until no further nesting is encountered.
 
 For example, resolving `StoriesInCurrent'Iteration` tag against this set of translation templates
 
@@ -39,7 +39,19 @@ Please refer to [tests/LocalizerTester.cs] (tests/LocalizerTester.cs) for more i
 
 ### VersionOne.Localization.LocalizationManager
 
-Please refer to [tests/SetOverrideTester.cs] (tests/SetOverrideTester.cs) and [tests/CultureTester.cs] (tests/CulturalTester.cs) for more information.
+Maintains a graph of culture-specific `Localizer` instances configured to fallback from one another for missing translations as follows:
+
+* specific culture
+* neutral culture
+* default (invariant) culture set via `defaultculture` constructor argument
+
+For example, translation fallback chain of a `Localizer` instance for `fr-FR` culture produced by `LocalizationManager` instance configured with `en` default culture is `fr-FR` => `fr` => `en`.
+
+When building a new `Localizer` instance for a requested `culture`, `LocalizationManager` fills this newly-created instance with translation templates retrieved by the `ITemplateSetLoader` instance configured via its `loader` constructor argument.
+
+If an optional dictionary of localizer tags and their translations is supplied via `overrides` constructor argument, `LocalizationManager` uses its values to override the contents of default `Localizer` instance after creating it.
+
+Please refer to [tests/SetOverrideTester.cs] (tests/SetOverrideTester.cs) and [tests/CulturalTester.cs] (tests/CulturalTester.cs) for more information.
 
 ### VersionOne.Localization.ITemplateSet
 
