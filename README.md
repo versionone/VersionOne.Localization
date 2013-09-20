@@ -1,7 +1,7 @@
 VersionOne.Localization
 =======================
 
-A lightweight, powerful, and flexible pattern-based localization library for .NET, supporting progressive refinement of translated output across multiple levels of culture definitions and functionality sets, translation adjustments performed in-the-field, and "hot" translation updates without application recompile or restart.
+A lightweight, powerful, and flexible pattern-based localization library for .NET, supporting progressive refinement of translated output across multiple levels of culture definitions and functionality sets, in-the-field translation adjustments by customers, and "hot" translation updates without application recompile or restart.
 
 Components
 ----------
@@ -12,7 +12,7 @@ Translates client-supplied localization `tag` into its corresponding localized v
 
 ### VersionOne.Localization.Localizer
 
-Implements `ILocalizerResolver` interface, caching localized output of each `tag`. If current `Localizer` instance does not define a translation for a given `tag`, it delegates resolution to a `fallback` instance configured via its constructor argument. If fallback localizer instance does not exist (as is in case of the default localizer instance), a `Trim()`'ed text of the tag itself is cached and returned as its localized value.
+Implements `ILocalizerResolver` interface, caching localized output of each `tag`. If current `Localizer` instance does not define a translation for a given `tag`, it delegates resolution to a `fallback` instance configured via its constructor argument. If fallback localizer instance does not exist (as is in case of the default localizer instance), a `Trim()`ed text of the tag itself is cached and returned as its localized value.
 
 Each localization tag is treated as a stack of individual terms separated by tics `'` (terms themselves cannot contain tics). When translating a tag, `Localizer` attempts to resolve it from the most specific to the least specific form, until it finds a matching translation template defined. For example, translating a tag `foo'bar'baz` would cause the following resolution attempts until a matching translation template is found:
 
@@ -43,19 +43,19 @@ Maintains a graph of culture-specific `Localizer` instances configured to fallba
 
 * specific culture
 * neutral culture
-* default (invariant) culture set via `defaultculture` constructor argument
+* default (invariant) culture, established via `defaultculture` constructor argument
 
-For example, translation fallback chain of a `Localizer` instance for `fr-FR` culture produced by `LocalizationManager` instance configured with `en` default culture is `fr-FR` => `fr` => `en`.
+For example, translation fallback chain of a `Localizer` instance for `fr-FR` culture produced by `LocalizationManager` instance configured with `en` default culture is `fr-FR` >> `fr` >> `en`.
 
-When building a new `Localizer` instance for a requested `culture`, `LocalizationManager` fills this newly-created instance with translation templates retrieved by the `ITemplateSetLoader` instance configured via its `loader` constructor argument.
+When building a new `Localizer` instance for the requested `culture`, `LocalizationManager` fills the newly-created instance with translation templates retrieved using the `ITemplateSetLoader` instance configured via its `loader` constructor argument. It loads and applies translation template sets in the order specified via its `setnames` constructor argument. A translation template for a given localization tag defined in the currently loaded template set overrides those for the same tag from the sets that had preceded it.
 
-If an optional dictionary of localizer tags and their translations is supplied via `overrides` constructor argument, `LocalizationManager` uses its values to override the contents of default `Localizer` instance after creating it.
+If an optional dictionary of localizer tags and their translations is supplied via `overrides` constructor argument, `LocalizationManager` uses these values to override the contents of default `Localizer` instance immediately after having created it.
 
 Please refer to [tests/SetOverrideTester.cs] (tests/SetOverrideTester.cs) and [tests/CulturalTester.cs] (tests/CulturalTester.cs) for more information.
 
 ### VersionOne.Localization.ITemplateSet
 
-Represents a set of localizer translation templates. Each individual template defines a specific translation for a single localization tag. Template set instances implement `IDisposable` and, thus, must be properly disposed of.
+Represents a set of localizer translation templates. Each individual template defines a specific translation for a single localization tag. Template set instances implement `IDisposable` and, thus, must be properly `Dispose()`ed of.
 
 ### VersionOne.Localization.TextTemplateSet
 
@@ -81,7 +81,7 @@ Defines a mechanism for retrieving a specific localizer template set `setname` f
 
 ### VersionOne.Localization.FileTemplateSetLoader
 
-Implements `ITemplateSetLoader` interface for building localizer template sets from a set of text files (formatted according to `TextTemplateSet` specification above) located in a folder specified by the `path` constructor argument. For each requested `culture` and set name combination, it either produces an `ITemplateSet` instance (backed by `TextTemplateSet`) from a file named `<culture>.<setname>.txt`, or yields `null` if no such file exists.
+Implements `ITemplateSetLoader` interface for building localizer template sets from a set of text files (formatted according to `TextTemplateSet` specification above) located in a folder specified by the `path` constructor argument. For each requested `culture` and `setname` combination, it either produces an `ITemplateSet` instance (backed by `TextTemplateSet`) from a file named `<culture>.<setname>.txt`, or yields `null` if no such file exists.
 
 Sample Web Application Implementation
 ----------------------------------
