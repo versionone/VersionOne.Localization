@@ -179,3 +179,8 @@ else
     //xml=$NUNIT_XML_OUTPUT \
     `winpath "$WORKSPACE/$TEST_DIR/bin/$Configuration/$TEST_DLL"`
 fi
+
+# ---- Produce NuGet .nupkg file ----------------------------------------------------------
+cd $WORKSPACE/$MAIN_DIR
+NuGet.exe pack $MAIN_CSPROJ -Symbols -prop Configuration=$Configuration
+cd $WORKSPACE
