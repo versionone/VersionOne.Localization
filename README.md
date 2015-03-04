@@ -81,7 +81,7 @@ Defines a mechanism for retrieving a specific localizer template set `setname` f
 
 ### VersionOne.Localization.FileTemplateSetLoader
 
-Implements `ITemplateSetLoader` interface for building localizer template sets from a set of text files (formatted according to `TextTemplateSet` specification above) located in a folder specified by the `path` constructor argument. For each requested `culture` and `setname` combination, it either produces an `ITemplateSet` instance (backed by `TextTemplateSet`) from a file named `<culture>.<setname>.txt`, or yields `null` if no such file exists.
+Implements `ITemplateSetLoader` interface for building localizer template sets from a set of text files (formatted according to `TextTemplateSet` specification above) located in a folder specified by the `path` constructor argument. For each requested `culture` and `setname` combination, it either produces an `ITemplateSet` instance (backed by `TextTemplateSet`) from a file named `<culture>.<setname>.txt`, or yields `null` if no such file exists. **Text file content must be encoded using  UTF8.**
 
 Sample Web Application Implementation
 ----------------------------------
