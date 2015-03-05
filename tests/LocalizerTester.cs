@@ -167,5 +167,23 @@ namespace VersionOne.Localization.Tests
 			loc.Add("A", "{}");
 			Assert.AreEqual("", loc.Resolve("A"));
 		}
+
+		[Test] public void TagWithSpecialCharacter()
+		{
+			const string tag = "løsningsforslag";
+			const string translation = "solution";
+			var loc = new Localizer(null);
+			loc.Add(tag, translation);
+			Assert.AreEqual(translation, loc.Resolve(tag));
+		}
+
+		[Test] public void ValueWithSpecialCharacter()
+		{
+			const string tag = "solution";
+			const string translation = "løsningsforslag";
+			var loc = new Localizer(null);
+			loc.Add(tag, translation);
+			Assert.AreEqual(translation, loc.Resolve(tag));
+		}
 	}
 }
