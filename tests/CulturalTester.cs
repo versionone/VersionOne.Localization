@@ -72,7 +72,7 @@ namespace VersionOne.Localization.Tests
 
 		[Test] public void SpecificFromSpecific ()
 		{
-			Assert.AreEqual("Specific Fance French", mgr.GetLocalizer("fr-FR").Resolve("TestSpecific"));
+			Assert.AreEqual("Specific France French", mgr.GetLocalizer("fr-FR").Resolve("TestSpecific"));
 		}
 
 		[Test] public void DefaultFromNeutral ()
