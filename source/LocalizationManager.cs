@@ -99,18 +99,30 @@ namespace VersionOne.Localization
 			Localizer loc = null;
 			foreach (string setname in setNames)
 			{
-				using (ITemplateSet templates = loader.Load(culture, setname))
+				try
 				{
-					if (templates != null)
+					using (ITemplateSet templates = loader.Load(culture, setname))
 					{
-						if (loc == null)
-							loc = new Localizer(fallback);
-						FillLocalizer(loc, templates);
+						if (templates != null)
+						{
+							if (loc == null)
+								loc = new Localizer(fallback);
+							FillLocalizer(loc, templates);
+						}
 					}
-					
+				}
+				catch (Exception e)
+				{
+					throw new TemplateSetLoadException(culture, setname, e);
 				}
 			}
 			return loc;
+		}
+
+		private class TemplateSetLoadException : ApplicationException
+		{
+			public TemplateSetLoadException(string culture, string setname, Exception inner)
+				: base(string.Format("Faied to load \"{1}\" template set for \"{0}\" culture.", culture, setname), inner) { }
 		}
 
 		private static void FillLocalizer (Localizer loc, ITemplateSet templates)
