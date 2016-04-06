@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VersionOne.Localization", "source\VersionOne.Localization.csproj", "{668F303C-D826-4324-8067-F63C09F3937A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VersionOne.Localization.Tests", "tests\VersionOne.Localization.Tests.csproj", "{FF530841-1D78-4ACE-A2AF-045A2D32FB03}"
@@ -9,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VersionOne.Localization.Tes
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "web", "web\web.csproj", "{B23803D9-1B89-4F68-9241-504F84AAD85A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7AFE288E-0141-4B62-A41F-8B28147B5951}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
