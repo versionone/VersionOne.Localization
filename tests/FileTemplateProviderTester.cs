@@ -21,7 +21,12 @@ namespace VersionOne.Localization.Tests
 		{
 			var loader = new FileTemplateProvider(".", "Test");
 			using (var set = loader.Load("no"))
-				yield return set.GetNextTemplate();
+			{
+				while (set.MoveNext())
+				{
+					yield return set.Current;
+				}
+			}
 		}
 
 		[Test] public void BOMless_UTF8_Works()

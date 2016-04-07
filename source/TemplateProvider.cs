@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace VersionOne.Localization
@@ -9,7 +10,7 @@ namespace VersionOne.Localization
 	 */
 	public interface ITemplateProvider
 	{
-		ITemplateSet Load(string culture);
+		IEnumerator<Template> Load(string culture);
 
 		string Name { get; }
 	}
@@ -24,9 +25,14 @@ namespace VersionOne.Localization
 			Name = setname;
 		}
 
-		public ITemplateSet Load(string culture)
+		public IEnumerator<Template> Load(string culture)
 		{
-			return _loader.Load(culture, Name);
+			var templateSet = _loader.Load(culture, Name);
+			if (templateSet == null) yield break;
+
+			Template item;
+			while ((item = templateSet.GetNextTemplate()) != null)
+				yield return item;
 		}
 
 		public string Name { get; private set; }
@@ -42,7 +48,7 @@ namespace VersionOne.Localization
 			Name = name;
 		}
 
-		public ITemplateSet Load(string culture)
+		public IEnumerator<Template> Load(string culture)
 		{
 			var filename = Path.Combine(_path, string.Format("{0}.{1}.txt", culture, Name));
 			if (!File.Exists(filename))

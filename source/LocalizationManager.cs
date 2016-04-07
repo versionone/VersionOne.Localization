@@ -107,9 +107,9 @@ namespace VersionOne.Localization
 			{
 				try
 				{
-					using (ITemplateSet templates = provider.Load(culture))
+					using (IEnumerator<Template> templates = provider.Load(culture))
 					{
-						if (templates != null)
+						if (templates != null && templates.MoveNext()) //Has to have SOME kind of content
 						{
 							if (loc == null)
 								loc = new Localizer(fallback);
@@ -132,15 +132,17 @@ namespace VersionOne.Localization
 				: base(string.Format("Faied to load \"{1}\" template set for \"{0}\" culture.", culture, name), inner) { }
 		}
 
-		private static void FillLocalizer (Localizer loc, ITemplateSet templates)
+		private static void FillLocalizer(Localizer loc, IEnumerator<Template> templates)
 		{
-			for (Template t = templates.GetNextTemplate(); t != null; t = templates.GetNextTemplate())
+			//This is stupid but it already was hit once by MoveNext() to ensure it had content before we performed this function
+			if (templates.Current == null) templates.MoveNext();
+			do
 			{
-				if (string.IsNullOrEmpty(t.Translation))
-					loc.Remove(t.Tag);
+				if (string.IsNullOrEmpty(templates.Current.Translation))
+					loc.Remove(templates.Current.Tag);
 				else
-					loc.Add(t.Tag, t.Translation);
-			}
+					loc.Add(templates.Current.Tag, templates.Current.Translation);
+			} while (templates.MoveNext());
 		}
 	}
 }
