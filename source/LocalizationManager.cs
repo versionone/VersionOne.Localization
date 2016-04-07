@@ -119,17 +119,17 @@ namespace VersionOne.Localization
 				}
 				catch (Exception e)
 				{
-					throw new TemplateSetLoadException(culture, "SOMETHING", e); //TODO This is WRONG
+					throw new TemplateSetLoadException(culture, provider.Name, e);
 				}
 			}
 
 			return loc;
 		}
 
-		public class TemplateSetLoadException : ApplicationException
+		private class TemplateSetLoadException : ApplicationException
 		{
-			public TemplateSetLoadException(string culture, string setname, Exception inner)
-				: base(string.Format("Faied to load \"{1}\" template set for \"{0}\" culture.", culture, setname), inner) { }
+			public TemplateSetLoadException(string culture, string name, Exception inner)
+				: base(string.Format("Faied to load \"{1}\" template set for \"{0}\" culture.", culture, name), inner) { }
 		}
 
 		private static void FillLocalizer (Localizer loc, ITemplateSet templates)
