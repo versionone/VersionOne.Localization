@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CulturalTester.cs" />
+    <Compile Include="FileTemplateProviderTester.cs" />
     <Compile Include="FileTemplateSetLoaderTester.cs" />
     <Compile Include="LocalizerTester.cs" />
     <Compile Include="MyTemplateSetLoader.cs" />

@@ -1,17 +1,20 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 
 namespace VersionOne.Localization
 {
-	public class TextTemplateSet : ITemplateSet
+	public class TextTemplateSet : ITemplateSet, IEnumerator<Template>
 	{
-		private System.IO.TextReader _reader;
+		private TextReader _reader;
 
-		public TextTemplateSet (System.IO.TextReader reader)
+		public TextTemplateSet (TextReader reader)
 		{
 			_reader = reader;
 		}
 
-		private static string NextLine (System.IO.TextReader reader)
+		private static string NextLine (TextReader reader)
 		{
 			string line = reader.ReadLine();
 			if (line != null)
@@ -24,7 +27,7 @@ namespace VersionOne.Localization
 				}
 			return line;
 		}
-		private static Template NextTemplate (System.IO.TextReader reader)
+		private static Template NextTemplate (TextReader reader)
 		{
 			string line;
 			while ((line = NextLine(reader)) != null)
@@ -59,6 +62,34 @@ namespace VersionOne.Localization
 				((IDisposable)_reader).Dispose();
 				_reader = null;
 			}
+		}
+
+		public bool MoveNext()
+		{
+			var nextTemplate = GetNextTemplate();
+			
+			if (nextTemplate == null) return false;
+			
+			Current = nextTemplate;
+			return true;
+		}
+
+		public void Reset()
+		{
+			var reader = _reader as StreamReader;
+
+			if (reader == null) return;
+
+			var streamReader = reader;
+			streamReader.BaseStream.Position = 0;
+			streamReader.DiscardBufferedData();
+		}
+
+		public Template Current { get; private set; }
+
+		object IEnumerator.Current
+		{
+			get { return Current; }
 		}
 	}
 }

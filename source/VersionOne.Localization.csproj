@@ -44,6 +44,7 @@
     <Compile Include="FileTemplateSetLoader.cs" />
     <Compile Include="LocalizationManager.cs" />
     <Compile Include="Localizer.cs" />
+    <Compile Include="TemplateProvider.cs" />
     <Compile Include="TemplateSet.cs" />
     <Compile Include="TextTemplateSet.cs" />
     <Compile Include="Translator.cs" />
