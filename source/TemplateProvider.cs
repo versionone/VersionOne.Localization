@@ -14,7 +14,7 @@ namespace VersionOne.Localization
 		string Name { get; }
 	}
 
-	public class CompatibilityTemplateProvider : ITemplateProvider
+	internal class CompatibilityTemplateProvider : ITemplateProvider
 	{
 		private readonly ITemplateSetLoader _loader;
 
@@ -27,28 +27,6 @@ namespace VersionOne.Localization
 		public ITemplateSet Load(string culture)
 		{
 			return _loader.Load(culture, Name);
-		}
-
-		public string Name { get; private set; }
-	}
-
-	public class FileTemplateProvider : ITemplateProvider
-	{
-		private readonly string _path;
-
-		public FileTemplateProvider(string path, string name)
-		{
-			_path = path;
-			Name = name;
-		}
-
-		public ITemplateSet Load(string culture)
-		{
-			var filename = Path.Combine(_path, string.Format("{0}.{1}.txt", culture, Name));
-			if (!File.Exists(filename))
-				return null;
-			TextReader reader = new StreamReader(filename, new UTF8Encoding(false, true));
-			return new TextTemplateSet(reader);
 		}
 
 		public string Name { get; private set; }
