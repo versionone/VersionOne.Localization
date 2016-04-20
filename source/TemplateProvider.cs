@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 
 namespace VersionOne.Localization
@@ -10,25 +11,35 @@ namespace VersionOne.Localization
 	public interface ITemplateProvider
 	{
 		ITemplateSet Load(string culture);
-
-		string Name { get; }
 	}
 
 	internal class CompatibilityTemplateProvider : ITemplateProvider
 	{
 		private readonly ITemplateSetLoader _loader;
+		private readonly string _setname;
 
 		public CompatibilityTemplateProvider(ITemplateSetLoader loader, string setname)
 		{
 			_loader = loader;
-			Name = setname;
+			_setname = setname;
 		}
 
 		public ITemplateSet Load(string culture)
 		{
-			return _loader.Load(culture, Name);
+			try 
+			{
+				return _loader.Load(culture, _setname);
+			}
+			catch (Exception e)
+			{
+				throw new TemplateSetLoadException(culture, _setname, e);
+			}
 		}
 
-		public string Name { get; private set; }
+		private class TemplateSetLoadException : ApplicationException
+		{
+			public TemplateSetLoadException(string culture, string name, Exception inner)
+				: base(string.Format("Faied to load \"{1}\" template set for \"{0}\" culture.", culture, name), inner) { }
+		}
 	}
 }

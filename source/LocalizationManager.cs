@@ -17,7 +17,7 @@ namespace VersionOne.Localization
 			params string[] setnames)
 			: this(
 				new CultureInfo(defaultculture),
-				setnames.Select(setname => new CompatibilityTemplateProvider(loader, setname)))
+				setnames.Select(setname => new CompatibilityTemplateProvider(loader, setname)).ToArray())
 		{
 			_overrides = overrides;
 		}
@@ -25,10 +25,10 @@ namespace VersionOne.Localization
 		private LocalizationManager(CultureInfo defaultculture, ITemplateSetLoader loader, params string[] setnames)
 			: this(
 			defaultculture, 
-			setnames.Select(setname => new CompatibilityTemplateProvider(loader, setname)))
+			setnames.Select(setname => new CompatibilityTemplateProvider(loader, setname)).ToArray())
 		{}
 
-		public LocalizationManager(CultureInfo defaultculture, IEnumerable<ITemplateProvider> providers)
+		public LocalizationManager(CultureInfo defaultculture, params ITemplateProvider[] providers)
 		{
 			_defaultculture = defaultculture;
 			_providers = providers;
@@ -105,31 +105,18 @@ namespace VersionOne.Localization
 			Localizer loc = null;
 			foreach (ITemplateProvider provider in providers)
 			{
-				try
+				using (ITemplateSet templates = provider.Load(culture))
 				{
-					using (ITemplateSet templates = provider.Load(culture))
+					if (templates != null)
 					{
-						if (templates != null)
-						{
-							if (loc == null)
-								loc = new Localizer(fallback);
-							FillLocalizer(loc, templates);
-						}
+						if (loc == null)
+							loc = new Localizer(fallback);
+						FillLocalizer(loc, templates);
 					}
-				}
-				catch (Exception e)
-				{
-					throw new TemplateSetLoadException(culture, provider.Name, e);
 				}
 			}
 
 			return loc;
-		}
-
-		private class TemplateSetLoadException : ApplicationException
-		{
-			public TemplateSetLoadException(string culture, string name, Exception inner)
-				: base(string.Format("Faied to load \"{1}\" template set for \"{0}\" culture.", culture, name), inner) { }
 		}
 
 		private static void FillLocalizer (Localizer loc, ITemplateSet templates)
