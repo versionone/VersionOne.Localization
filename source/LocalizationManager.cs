@@ -17,15 +17,15 @@ namespace VersionOne.Localization
 			params string[] setnames)
 			: this(
 				new CultureInfo(defaultculture),
-				setnames.Select(setname => new CompatibilityTemplateProvider(loader, setname)).ToArray())
+				setnames.Select(setname => new CompatibilityTemplateProvider(loader, setname)).Cast<ITemplateProvider>().ToArray())
 		{
 			_overrides = overrides;
 		}
 
 		private LocalizationManager(CultureInfo defaultculture, ITemplateSetLoader loader, params string[] setnames)
 			: this(
-			defaultculture, 
-			setnames.Select(setname => new CompatibilityTemplateProvider(loader, setname)).ToArray())
+			defaultculture,
+			setnames.Select(setname => new CompatibilityTemplateProvider(loader, setname)).Cast<ITemplateProvider>().ToArray())
 		{}
 
 		public LocalizationManager(CultureInfo defaultculture, params ITemplateProvider[] providers)
