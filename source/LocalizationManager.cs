@@ -13,19 +13,14 @@ namespace VersionOne.Localization
 		private readonly IDictionary _localizers;
 		private readonly IDictionary<string, string> _overrides;
 
-		public LocalizationManager(string defaultculture, ITemplateSetLoader loader, IDictionary<string, string> overrides,
-			params string[] setnames)
-			: this(
-				new CultureInfo(defaultculture),
-				setnames.Select(setname => new CompatibilityTemplateProvider(loader, setname)).Cast<ITemplateProvider>().ToArray())
+		public LocalizationManager(string defaultculture, ITemplateSetLoader loader, IDictionary<string, string> overrides, params string[] setnames)
+			: this(new CultureInfo(defaultculture), loader, setnames)
 		{
 			_overrides = overrides;
 		}
 
 		private LocalizationManager(CultureInfo defaultculture, ITemplateSetLoader loader, params string[] setnames)
-			: this(
-			defaultculture,
-			setnames.Select(setname => new CompatibilityTemplateProvider(loader, setname)).Cast<ITemplateProvider>().ToArray())
+			: this(defaultculture, setnames.Select(setname => new CompatibilityTemplateProvider(loader, setname)).Cast<ITemplateProvider>().ToArray())
 		{}
 
 		public LocalizationManager(CultureInfo defaultculture, params ITemplateProvider[] providers)
