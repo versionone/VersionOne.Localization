@@ -23,7 +23,10 @@ namespace VersionOne.Localization
 			: this(defaultculture, setnames.Select(setname => new CompatibilityTemplateProvider(loader, setname)).Cast<ITemplateProvider>().ToArray())
 		{}
 
-		public LocalizationManager(CultureInfo defaultculture, params ITemplateProvider[] providers)
+		public LocalizationManager(string defaultculture, params ITemplateProvider[] providers) : this(new CultureInfo(defaultculture), providers)
+		{}
+
+		private LocalizationManager(CultureInfo defaultculture, params ITemplateProvider[] providers)
 		{
 			_defaultculture = defaultculture;
 			_providers = providers;
