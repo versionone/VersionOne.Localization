@@ -13,7 +13,7 @@ namespace VersionOne.Localization
 		ITemplateSet Load(string culture);
 	}
 
-	internal class CompatibilityTemplateProvider : ITemplateProvider
+	public class CompatibilityTemplateProvider : ITemplateProvider
 	{
 		private readonly ITemplateSetLoader _loader;
 		private readonly string _setname;
