@@ -2,14 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace VersionOne.Localization
 {
 	public class LocalizationManager
 	{
 		private readonly CultureInfo _defaultculture;
-		private readonly ITemplateSetLoader _loader;
-		private readonly string[] _setnames;
+		private readonly IEnumerable<ITemplateProvider> _providers; 
 		private readonly IDictionary _localizers;
 		private readonly IDictionary<string, string> _overrides;
 
@@ -20,10 +20,16 @@ namespace VersionOne.Localization
 		}
 
 		private LocalizationManager(CultureInfo defaultculture, ITemplateSetLoader loader, params string[] setnames)
+			: this(defaultculture, setnames.Select(setname => new CompatibilityTemplateProvider(loader, setname)).Cast<ITemplateProvider>().ToArray())
+		{}
+
+		public LocalizationManager(string defaultculture, params ITemplateProvider[] providers) : this(new CultureInfo(defaultculture), providers)
+		{}
+
+		private LocalizationManager(CultureInfo defaultculture, params ITemplateProvider[] providers)
 		{
 			_defaultculture = defaultculture;
-			_loader = loader;
-			_setnames = setnames;
+			_providers = providers;
 			_localizers = new Hashtable();
 		}
 
@@ -73,7 +79,7 @@ namespace VersionOne.Localization
 
 		private Localizer CreateDefaultLocalizer ()
 		{
-			Localizer loc = CreateLocalizer(null, _defaultculture.Name, _loader, _setnames);
+			Localizer loc = CreateLocalizer(null, _defaultculture.Name, _providers);
 			if (loc != null)
 			{
 				if (_overrides != null)
@@ -87,42 +93,28 @@ namespace VersionOne.Localization
 		private Localizer CreateLocalizer (CultureInfo culture, CultureInfo fallbackculture)
 		{
 			Localizer fallbacklocalizer = GetLocalizer(fallbackculture);
-			Localizer loc = CreateLocalizer(fallbacklocalizer, culture.Name, _loader, _setnames);
+			Localizer loc = CreateLocalizer(fallbacklocalizer, culture.Name, _providers);
 			return loc ?? fallbacklocalizer;
 		}
 
 
-		private static Localizer CreateLocalizer (Localizer fallback, string culture, ITemplateSetLoader loader, params string[] setNames)
+		private static Localizer CreateLocalizer(Localizer fallback, string culture, IEnumerable<ITemplateProvider> providers)
 		{
-			if (setNames == null)
-				throw new ArgumentNullException("setNames");
 			Localizer loc = null;
-			foreach (string setname in setNames)
+			foreach (ITemplateProvider provider in providers)
 			{
-				try
+				using (ITemplateSet templates = provider.Load(culture))
 				{
-					using (ITemplateSet templates = loader.Load(culture, setname))
+					if (templates != null)
 					{
-						if (templates != null)
-						{
-							if (loc == null)
-								loc = new Localizer(fallback);
-							FillLocalizer(loc, templates);
-						}
+						if (loc == null)
+							loc = new Localizer(fallback);
+						FillLocalizer(loc, templates);
 					}
 				}
-				catch (Exception e)
-				{
-					throw new TemplateSetLoadException(culture, setname, e);
-				}
 			}
-			return loc;
-		}
 
-		private class TemplateSetLoadException : ApplicationException
-		{
-			public TemplateSetLoadException(string culture, string setname, Exception inner)
-				: base(string.Format("Faied to load \"{1}\" template set for \"{0}\" culture.", culture, setname), inner) { }
+			return loc;
 		}
 
 		private static void FillLocalizer (Localizer loc, ITemplateSet templates)
