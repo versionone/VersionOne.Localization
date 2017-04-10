@@ -99,14 +99,26 @@ namespace VersionOne.Localization
 		{
 			string tag = templateTag;
 			string template;
+		    string fallbackTemplate = null;
+		    if (_fallback != null)
+		    {
+		        fallbackTemplate = _fallback.FindTemplate(templateTag);
+		    }
 			while ( (template = LookupTemplate(tag)) == null)
 			{
-				int dotindex = tag.LastIndexOf(SeparatorChar);
-				if (dotindex < 0) break;
-				tag = tag.Substring(0, dotindex);
+			    if (fallbackTemplate == null)
+			    {
+			        int dotindex = tag.LastIndexOf(SeparatorChar);
+			        if (dotindex < 0) break;
+			        tag = tag.Substring(0, dotindex);
+			    }
+			    else
+			    {
+			        break;
+			    }
 			}
 			if (template == null && _fallback != null)
-				template = _fallback.FindTemplate(templateTag);
+				template = fallbackTemplate;
 			return template;
 		}
 

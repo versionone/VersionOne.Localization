@@ -195,5 +195,13 @@ namespace VersionOne.Localization.Tests
 		{
 			Assert.AreEqual("ABC fed GHI", mgr.GetLocalizer("ru").Resolve("XYZ"));
 		}
+
+        [Test]
+		public void UsingBaseLocalizationsWithLanguageOverrides()
+		{
+            //We have localizations that use overrides as the first part of the localization. example: Team'Title={Team} Title
+            //This test will resolve that localization from the base while replacing the relevant part with the language override.
+			Assert.AreEqual("en-US Team Title for report", mgr.GetLocalizer("en-US").Resolve("Team'Title"));
+		}
 	}
 }

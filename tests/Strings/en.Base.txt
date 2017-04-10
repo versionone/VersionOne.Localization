@@ -7,6 +7,9 @@ Command={1} {2}
 Fixed=Never Change
 This==has==equal==signs=Equal-sign free
 
+Team=en Team
+Team'Title={Team} Title for report
+
 TestDefault=Default English
 TestNeutral=Neutral English
 TestSpecific=Specific English
