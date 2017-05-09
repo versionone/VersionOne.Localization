@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -8,6 +9,7 @@ namespace VersionOne.Localization
 	public interface ILocalizerResolver
 	{
 		string Resolve(string tag);
+		IDictionary<string, string> Resolve(IEnumerable<string> tags);
 	}
 
 	public class Localizer : ILocalizerResolver
@@ -60,6 +62,11 @@ namespace VersionOne.Localization
 		public string Resolve (string tag)
 		{
 			return Resolve(tag, null);
+		}
+
+		public IDictionary<string, string> Resolve(IEnumerable<string> tags)
+		{
+			return tags.Distinct().ToDictionary((tag) => tag, Resolve);
 		}
 
 		private string Resolve(string tag, Stack<string> resolvestack)

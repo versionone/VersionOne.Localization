@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
@@ -61,6 +63,11 @@ namespace web
 		public string Resolve(string tag)
 		{
 			return tag;
+		}
+
+		public IDictionary<string, string> Resolve(IEnumerable<string> tags)
+		{
+			return tags.Distinct().ToDictionary((tag) => tag, Resolve);
 		}
 	}
 }

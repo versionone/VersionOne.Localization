@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace VersionOne.Localization.Tests
@@ -15,6 +16,22 @@ namespace VersionOne.Localization.Tests
 			Localizer loc = new Localizer(null);
 			loc.Add("tag1", "This is the tag 1 string");
 			Assert.AreEqual("This is the tag 1 string", loc.Resolve("tag1"));
+		}
+
+		[Test] public void SimpleTranslateMulti ()
+		{
+			Localizer loc = new Localizer(null);
+			loc.Add("tag1", "This is the tag 1 string");
+			loc.Add("tag2", "This is the tag 2 string");
+			loc.Add("tag3", "This is the tag 3 string");
+			Assert.AreEqual(
+				new Dictionary<string, string>
+				{
+					{"tag2", "This is the tag 2 string"},
+					{"tag3", "This is the tag 3 string"},
+					{"tag1", "This is the tag 1 string"}
+				},
+				loc.Resolve(new List<string> {"tag2", "tag3", "tag1"}));
 		}
 
 		[Test] public void SimpleTemplate ()
@@ -87,6 +104,25 @@ namespace VersionOne.Localization.Tests
 			Assert.AreEqual("Report Projects/Stories", loc.Resolve("Report2'Scope'Story"));
 			Assert.AreEqual("Report: User by Story", loc.Resolve("Report2'Member'Story"));
 			Assert.AreEqual("Report: User by Project", loc.Resolve("Report2'Member'Scope"));
+		}
+
+		[Test] public void ComplexTemplateOverrideMultiResolve ()
+		{
+			Localizer loc = new Localizer(null);
+			loc.Add("Plural", "{1}s");
+			loc.Add("Report2", "Report {Plural'1}/{Plural'2}");
+			loc.Add("Plural'Story", "Stories");
+			loc.Add("Scope", "Project");
+			loc.Add("Report2'Member", "Report: User by {2}");
+			Assert.AreEqual(
+				new Dictionary<string, string>
+				{
+					{"Report2'Scope'Story", "Report Projects/Stories"},
+					{"Report2'Member'Story", "Report: User by Story"},
+					{"Report2'Member'Scope", "Report: User by Project"}
+				},
+				loc.Resolve(new List<string> {"Report2'Scope'Story", "Report2'Member'Story", "Report2'Member'Scope"})
+			);
 		}
 
 		[Test] public void AlwaysExpand ()
@@ -170,7 +206,7 @@ namespace VersionOne.Localization.Tests
 
 		[Test] public void TagWithSpecialCharacter()
 		{
-			const string tag = "løsningsforslag";
+			const string tag = "lÃ¸sningsforslag";
 			const string translation = "solution";
 			var loc = new Localizer(null);
 			loc.Add(tag, translation);
@@ -180,10 +216,27 @@ namespace VersionOne.Localization.Tests
 		[Test] public void ValueWithSpecialCharacter()
 		{
 			const string tag = "solution";
-			const string translation = "løsningsforslag";
+			const string translation = "lÃ¸sningsforslag";
 			var loc = new Localizer(null);
 			loc.Add(tag, translation);
 			Assert.AreEqual(translation, loc.Resolve(tag));
+		}
+
+		[Test] public void TranslateMultiDuplicates ()
+		{
+			Localizer loc = new Localizer(null);
+			loc.Add("tag1", "This is the tag 1 string");
+			loc.Add("tag2", "This is the tag 2 string");
+			loc.Add("tag3", "This is the tag 3 string");
+			Assert.AreEqual(
+				new Dictionary<string, string>
+				{
+					{"tag2", "This is the tag 2 string"},
+					{"tag3", "This is the tag 3 string"},
+					{"tag1", "This is the tag 1 string"}
+				},
+				loc.Resolve(new List<string> {"tag2", "tag3", "tag1", "tag2", "tag2"})
+			);
 		}
 	}
 }
