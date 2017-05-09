@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using VersionOne.Localization;
 
 namespace web
@@ -49,6 +51,11 @@ namespace web
 			}
 
 			return Loc.Resolve(key);
+		}
+
+		public IDictionary<string, string> Resolve(IEnumerable<string> tags)
+		{
+			return tags.Distinct().ToDictionary((tag) => tag, Resolve);
 		}
 	}
 }
