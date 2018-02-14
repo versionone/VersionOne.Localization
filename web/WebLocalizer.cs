@@ -52,9 +52,9 @@ namespace web
 			return Loc.Resolve(key);
 		}
 
-		public Dictionary<string, string> GetTemplateDictionary()
+		public TemplateStack GetTemplateStack()
 		{
-			return Loc.GetTemplateDictionary();
+			return Loc.GetTemplateStack();
 		}
 	}
 }

@@ -10,8 +10,14 @@ namespace VersionOne.Localization
 	{
 		string Resolve(string tag);
 
-		Dictionary<string, string> GetTemplateDictionary();
+		TemplateStack GetTemplateStack();
 	}
+
+    public class TemplateStack
+    {
+        public IDictionary<string, string> Templates { get; set; }
+        public TemplateStack FallbackStack { get; set; }
+    }
 
 	public class Localizer : ILocalizerResolver
 	{
@@ -48,19 +54,15 @@ namespace VersionOne.Localization
 			_fallback = fallback;
 		}
 
-		public Dictionary<string, string> GetTemplateDictionary()
+		public TemplateStack GetTemplateStack()
 		{
-			Dictionary<string, string> merged = new Dictionary<string, string>();
-			if (_fallback != null)
-			{
-				_fallback.GetTemplateDictionary().ToList().ForEach(
-					kvPair => merged.Add(kvPair.Key, kvPair.Value));
-			}
+			Dictionary<string, string> templates = new Dictionary<string, string>();
 			foreach (DictionaryEntry entry in _templates)
 			{
-				merged[(string) entry.Key] = (string) entry.Value;
+			    templates[(string) entry.Key] = (string) entry.Value;
 			}
-			return merged;
+
+		    return new TemplateStack {Templates = templates, FallbackStack = _fallback?.GetTemplateStack()};
 		}
 
 		public void Add (string tag, string translation)

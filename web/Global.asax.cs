@@ -64,9 +64,9 @@ namespace web
 			return tag;
 		}
 
-		public Dictionary<string, string> GetTemplateDictionary()
+		public TemplateStack GetTemplateStack()
 		{
-			return new Dictionary<string, string>();
+			return new TemplateStack { Templates = new Dictionary<string, string>()};
 		}
 	}
 }
