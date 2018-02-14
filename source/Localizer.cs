@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -8,6 +9,8 @@ namespace VersionOne.Localization
 	public interface ILocalizerResolver
 	{
 		string Resolve(string tag);
+
+		Dictionary<string, string> GetTemplateDictionary();
 	}
 
 	public class Localizer : ILocalizerResolver
@@ -43,6 +46,21 @@ namespace VersionOne.Localization
 		public Localizer (Localizer fallback)
 		{
 			_fallback = fallback;
+		}
+
+		public Dictionary<string, string> GetTemplateDictionary()
+		{
+			Dictionary<string, string> merged = new Dictionary<string, string>();
+			if (_fallback != null)
+			{
+				_fallback.GetTemplateDictionary().ToList().ForEach(
+					kvPair => merged.Add(kvPair.Key, kvPair.Value));
+			}
+			foreach (DictionaryEntry entry in _templates)
+			{
+				merged[(string) entry.Key] = (string) entry.Value;
+			}
+			return merged;
 		}
 
 		public void Add (string tag, string translation)
