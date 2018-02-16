@@ -17,6 +17,52 @@ namespace VersionOne.Localization.Tests
 			Assert.AreEqual("This is the tag 1 string", loc.Resolve("tag1"));
 		}
 
+		[Test]
+		public void SignaturesAreUnique()
+		{
+			Localizer loc = new Localizer(null);
+			loc.Add("tag1", "This is the tag 1 string");
+			Localizer loc2 = new Localizer(null);
+			loc2.Add("tag2", "This is the tag 2 string");
+			Assert.AreNotEqual(loc.GetSignature(), loc2.GetSignature());
+		}
+
+		[Test]
+		public void SignaturesAreUniqueBasedOnKeysAndValues()
+		{
+			Localizer loc = new Localizer(null);
+			loc.Add("tag1", "This is the tag 1 string");
+			Localizer loc2 = new Localizer(null);
+			loc2.Add("tag1This is the tag 1 string", "");
+			Assert.AreNotEqual(loc.GetSignature(), loc2.GetSignature());
+		}
+
+		[Test]
+		public void SignaturesAreStable()
+		{
+			Localizer loc = new Localizer(null);
+			loc.Add("tag1", "This is the tag 1 string");
+			Localizer loc2 = new Localizer(null);
+			loc2.Add("tag1", "This is the tag 1 string");
+			Assert.AreEqual(loc.GetSignature(), loc2.GetSignature());
+		}
+
+		[Test]
+		public void LocalizersWithDifferentFallbacksHaveUniqueSignatures()
+		{
+			Localizer fallback = new Localizer(null);
+			fallback.Add("fallback", "fallback string");
+			Localizer loc = new Localizer(fallback);
+			loc.Add("tag1", "This is the tag 1 string");
+
+			Localizer fallback2 = new Localizer(null);
+			fallback2.Add("fallback2", "fallback2 string");
+			Localizer loc2 = new Localizer(null);
+			loc2.Add("tag1", "This is the tag 1 string");
+			Assert.AreNotEqual(loc.GetSignature(), loc2.GetSignature());
+		}
+
+
 		[Test] public void SimpleTemplate ()
 		{
 			Localizer loc = new Localizer(null);

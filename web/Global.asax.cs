@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Web;
@@ -62,6 +63,11 @@ namespace web
 		public string Resolve(string tag)
 		{
 			return tag;
+		}
+
+		public string GetSignature()
+		{
+			return String.Empty;
 		}
 
 		public TemplateStack GetTemplateStack()

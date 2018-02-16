@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -9,6 +11,8 @@ namespace VersionOne.Localization
 	public interface ILocalizerResolver
 	{
 		string Resolve(string tag);
+
+		string GetSignature();
 
 		TemplateStack GetTemplateStack();
 	}
@@ -48,7 +52,6 @@ namespace VersionOne.Localization
 		private readonly IDictionary _templates = new Hashtable {{"", ""}};
 		private readonly IDictionary _resolved = Hashtable.Synchronized(new Hashtable());
 		private readonly Localizer _fallback;
-
 		public Localizer (Localizer fallback)
 		{
 			_fallback = fallback;
@@ -63,6 +66,33 @@ namespace VersionOne.Localization
 			}
 
 		    return new TemplateStack {Templates = templates, FallbackStack = _fallback?.GetTemplateStack()};
+		}
+
+		static readonly byte[] _valueSeparator = new byte[] { 0x01 };
+		static readonly byte[] _recordSeparator = new byte[] { 0x02 };
+
+		public string GetSignature()
+		{
+			return Convert.ToBase64String(GetSignatureBytes());
+		}
+
+		private byte[] GetSignatureBytes()
+		{
+			SHA1Managed sha1 = new SHA1Managed();
+			foreach (DictionaryEntry entry in _templates)
+			{
+				var keyBytes = Encoding.UTF8.GetBytes((string) entry.Key);
+				var valueBytes = Encoding.UTF8.GetBytes((string) entry.Value);
+				sha1.TransformBlock(keyBytes, 0, keyBytes.Length, keyBytes, 0);
+				sha1.TransformBlock(_valueSeparator, 0, _valueSeparator.Length, _valueSeparator, 0);
+				sha1.TransformBlock(valueBytes, 0, valueBytes.Length, valueBytes, 0);
+				sha1.TransformBlock(_recordSeparator, 0, _recordSeparator.Length, _recordSeparator, 0);
+			}
+
+			var fallbackSignatureBytes = _fallback?.GetSignatureBytes() ?? new byte[0];
+			sha1.TransformFinalBlock(fallbackSignatureBytes, 0, fallbackSignatureBytes.Length);
+
+			return sha1.Hash;
 		}
 
 		public void Add (string tag, string translation)

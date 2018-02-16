@@ -52,6 +52,11 @@ namespace web
 			return Loc.Resolve(key);
 		}
 
+		public string GetSignature()
+		{
+			throw new NotImplementedException();
+		}
+
 		public TemplateStack GetTemplateStack()
 		{
 			return Loc.GetTemplateStack();
