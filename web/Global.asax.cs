@@ -65,10 +65,7 @@ namespace web
 			return tag;
 		}
 
-		public string GetSignature()
-		{
-			return String.Empty;
-		}
+		public string Signature => "";
 
 		public TemplateStack GetTemplateStack()
 		{

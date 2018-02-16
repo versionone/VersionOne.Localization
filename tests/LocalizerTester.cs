@@ -24,7 +24,7 @@ namespace VersionOne.Localization.Tests
 			loc.Add("tag1", "This is the tag 1 string");
 			Localizer loc2 = new Localizer(null);
 			loc2.Add("tag2", "This is the tag 2 string");
-			Assert.AreNotEqual(loc.GetSignature(), loc2.GetSignature());
+			Assert.AreNotEqual(loc.Signature, loc2.Signature);
 		}
 
 		[Test]
@@ -34,7 +34,7 @@ namespace VersionOne.Localization.Tests
 			loc.Add("tag1", "This is the tag 1 string");
 			Localizer loc2 = new Localizer(null);
 			loc2.Add("tag1This is the tag 1 string", "");
-			Assert.AreNotEqual(loc.GetSignature(), loc2.GetSignature());
+			Assert.AreNotEqual(loc.Signature, loc2.Signature);
 		}
 
 		[Test]
@@ -44,7 +44,7 @@ namespace VersionOne.Localization.Tests
 			loc.Add("tag1", "This is the tag 1 string");
 			Localizer loc2 = new Localizer(null);
 			loc2.Add("tag1", "This is the tag 1 string");
-			Assert.AreEqual(loc.GetSignature(), loc2.GetSignature());
+			Assert.AreEqual(loc.Signature, loc2.Signature);
 		}
 
 		[Test]
@@ -59,7 +59,7 @@ namespace VersionOne.Localization.Tests
 			fallback2.Add("fallback2", "fallback2 string");
 			Localizer loc2 = new Localizer(null);
 			loc2.Add("tag1", "This is the tag 1 string");
-			Assert.AreNotEqual(loc.GetSignature(), loc2.GetSignature());
+			Assert.AreNotEqual(loc.Signature, loc2.Signature);
 		}
 
 

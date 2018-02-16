@@ -12,7 +12,7 @@ namespace VersionOne.Localization
 	{
 		string Resolve(string tag);
 
-		string GetSignature();
+		string Signature { get; }
 
 		TemplateStack GetTemplateStack();
 	}
@@ -52,6 +52,7 @@ namespace VersionOne.Localization
 		private readonly IDictionary _templates = new Hashtable {{"", ""}};
 		private readonly IDictionary _resolved = Hashtable.Synchronized(new Hashtable());
 		private readonly Localizer _fallback;
+		private string _signature;
 		public Localizer (Localizer fallback)
 		{
 			_fallback = fallback;
@@ -71,12 +72,9 @@ namespace VersionOne.Localization
 		static readonly byte[] _valueSeparator = new byte[] { 0x01 };
 		static readonly byte[] _recordSeparator = new byte[] { 0x02 };
 
-		public string GetSignature()
-		{
-			return Convert.ToBase64String(GetSignatureBytes());
-		}
+		public string Signature => _signature ?? (_signature = Convert.ToBase64String(ComputeSignature()));
 
-		private byte[] GetSignatureBytes()
+		private byte[] ComputeSignature()
 		{
 			SHA1Managed sha1 = new SHA1Managed();
 			foreach (DictionaryEntry entry in _templates)
@@ -89,7 +87,7 @@ namespace VersionOne.Localization
 				sha1.TransformBlock(_recordSeparator, 0, _recordSeparator.Length, _recordSeparator, 0);
 			}
 
-			var fallbackSignatureBytes = _fallback?.GetSignatureBytes() ?? new byte[0];
+			var fallbackSignatureBytes = _fallback?.ComputeSignature() ?? new byte[0];
 			sha1.TransformFinalBlock(fallbackSignatureBytes, 0, fallbackSignatureBytes.Length);
 
 			return sha1.Hash;
@@ -99,12 +97,14 @@ namespace VersionOne.Localization
 		{
 			_templates[tag] = translation;
 			_resolved.Clear();
+			_signature = null;
 		}
 
 		public void Remove (string tag)
 		{
 			_templates.Remove(tag);
 			_resolved.Clear();
+			_signature = null;
 		}
 
 		public string Resolve (string tag)
