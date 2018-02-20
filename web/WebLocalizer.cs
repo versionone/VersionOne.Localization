@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -49,6 +50,13 @@ namespace web
 			}
 
 			return Loc.Resolve(key);
+		}
+
+		public string Signature => Loc.Signature;
+
+		public TemplateStack GetTemplateStack()
+		{
+			return Loc.GetTemplateStack();
 		}
 	}
 }

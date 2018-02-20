@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -8,7 +11,17 @@ namespace VersionOne.Localization
 	public interface ILocalizerResolver
 	{
 		string Resolve(string tag);
+
+		string Signature { get; }
+
+		TemplateStack GetTemplateStack();
 	}
+
+    public class TemplateStack
+    {
+        public IDictionary<string, string> Templates { get; set; }
+        public TemplateStack FallbackStack { get; set; }
+    }
 
 	public class Localizer : ILocalizerResolver
 	{
@@ -39,22 +52,59 @@ namespace VersionOne.Localization
 		private readonly IDictionary _templates = new Hashtable {{"", ""}};
 		private readonly IDictionary _resolved = Hashtable.Synchronized(new Hashtable());
 		private readonly Localizer _fallback;
-
+		private string _signature;
 		public Localizer (Localizer fallback)
 		{
 			_fallback = fallback;
+		}
+
+		public TemplateStack GetTemplateStack()
+		{
+			Dictionary<string, string> templates = new Dictionary<string, string>();
+			foreach (DictionaryEntry entry in _templates)
+			{
+			    templates[(string) entry.Key] = (string) entry.Value;
+			}
+
+		    return new TemplateStack {Templates = templates, FallbackStack = _fallback?.GetTemplateStack()};
+		}
+
+		static readonly byte[] _valueSeparator = new byte[] { 0x01 };
+		static readonly byte[] _recordSeparator = new byte[] { 0x02 };
+
+		public string Signature => _signature ?? (_signature = Convert.ToBase64String(ComputeSignature()));
+
+		private byte[] ComputeSignature()
+		{
+			SHA1Managed sha1 = new SHA1Managed();
+			foreach (DictionaryEntry entry in _templates)
+			{
+				var keyBytes = Encoding.UTF8.GetBytes((string) entry.Key);
+				var valueBytes = Encoding.UTF8.GetBytes((string) entry.Value);
+				sha1.TransformBlock(keyBytes, 0, keyBytes.Length, keyBytes, 0);
+				sha1.TransformBlock(_valueSeparator, 0, _valueSeparator.Length, _valueSeparator, 0);
+				sha1.TransformBlock(valueBytes, 0, valueBytes.Length, valueBytes, 0);
+				sha1.TransformBlock(_recordSeparator, 0, _recordSeparator.Length, _recordSeparator, 0);
+			}
+
+			var fallbackSignatureBytes = _fallback?.ComputeSignature() ?? new byte[0];
+			sha1.TransformFinalBlock(fallbackSignatureBytes, 0, fallbackSignatureBytes.Length);
+
+			return sha1.Hash;
 		}
 
 		public void Add (string tag, string translation)
 		{
 			_templates[tag] = translation;
 			_resolved.Clear();
+			_signature = null;
 		}
 
 		public void Remove (string tag)
 		{
 			_templates.Remove(tag);
 			_resolved.Clear();
+			_signature = null;
 		}
 
 		public string Resolve (string tag)
