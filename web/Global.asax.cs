@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
@@ -61,6 +63,13 @@ namespace web
 		public string Resolve(string tag)
 		{
 			return tag;
+		}
+
+		public string Signature => "";
+
+		public TemplateStack GetTemplateStack()
+		{
+			return new TemplateStack { Templates = new Dictionary<string, string>()};
 		}
 	}
 }
