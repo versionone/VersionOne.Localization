@@ -66,13 +66,19 @@ namespace VersionOne.Localization
 			    templates[(string) entry.Key] = (string) entry.Value;
 			}
 
-		    return new TemplateStack {Templates = templates, FallbackStack = _fallback?.GetTemplateStack()};
+		    return new TemplateStack {Templates = templates, FallbackStack = _fallback != null ? _fallback.GetTemplateStack() : null};
 		}
 
 		static readonly byte[] _valueSeparator = new byte[] { 0x01 };
 		static readonly byte[] _recordSeparator = new byte[] { 0x02 };
 
-		public string Signature => _signature ?? (_signature = Convert.ToBase64String(ComputeSignature()));
+		public string Signature
+		{
+			get
+			{
+				return _signature ?? (_signature = Convert.ToBase64String(ComputeSignature()));
+			}
+		}
 
 		private byte[] ComputeSignature()
 		{
@@ -87,7 +93,7 @@ namespace VersionOne.Localization
 				sha1.TransformBlock(_recordSeparator, 0, _recordSeparator.Length, _recordSeparator, 0);
 			}
 
-			var fallbackSignatureBytes = _fallback?.ComputeSignature() ?? new byte[0];
+			var fallbackSignatureBytes = _fallback != null ? _fallback.ComputeSignature() : new byte[0];
 			sha1.TransformFinalBlock(fallbackSignatureBytes, 0, fallbackSignatureBytes.Length);
 
 			return sha1.Hash;
