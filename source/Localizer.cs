@@ -17,11 +17,11 @@ namespace VersionOne.Localization
 		TemplateStack GetTemplateStack();
 	}
 
-    public class TemplateStack
-    {
-        public IDictionary<string, string> Templates { get; set; }
-        public TemplateStack FallbackStack { get; set; }
-    }
+	public class TemplateStack
+	{
+		public IDictionary<string, string> Templates { get; set; }
+		public TemplateStack FallbackStack { get; set; }
+	}
 
 	public class Localizer : ILocalizerResolver
 	{
@@ -63,10 +63,10 @@ namespace VersionOne.Localization
 			Dictionary<string, string> templates = new Dictionary<string, string>();
 			foreach (DictionaryEntry entry in _templates)
 			{
-			    templates[(string) entry.Key] = (string) entry.Value;
+				templates[(string) entry.Key] = (string) entry.Value;
 			}
 
-		    return new TemplateStack {Templates = templates, FallbackStack = _fallback != null ? _fallback.GetTemplateStack() : null};
+			return new TemplateStack {Templates = templates, FallbackStack = _fallback != null ? _fallback.GetTemplateStack() : null};
 		}
 
 		static readonly byte[] _valueSeparator = new byte[] { 0x01 };
