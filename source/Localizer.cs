@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -82,21 +81,23 @@ namespace VersionOne.Localization
 
 		private byte[] ComputeSignature()
 		{
-			SHA1Managed sha1 = new SHA1Managed();
-			foreach (DictionaryEntry entry in _templates)
+			using (SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider())
 			{
-				var keyBytes = Encoding.UTF8.GetBytes((string) entry.Key);
-				var valueBytes = Encoding.UTF8.GetBytes((string) entry.Value);
-				sha1.TransformBlock(keyBytes, 0, keyBytes.Length, keyBytes, 0);
-				sha1.TransformBlock(_valueSeparator, 0, _valueSeparator.Length, _valueSeparator, 0);
-				sha1.TransformBlock(valueBytes, 0, valueBytes.Length, valueBytes, 0);
-				sha1.TransformBlock(_recordSeparator, 0, _recordSeparator.Length, _recordSeparator, 0);
+				foreach (DictionaryEntry entry in _templates)
+				{
+					var keyBytes = Encoding.UTF8.GetBytes((string) entry.Key);
+					var valueBytes = Encoding.UTF8.GetBytes((string) entry.Value);
+					sha1.TransformBlock(keyBytes, 0, keyBytes.Length, keyBytes, 0);
+					sha1.TransformBlock(_valueSeparator, 0, _valueSeparator.Length, _valueSeparator, 0);
+					sha1.TransformBlock(valueBytes, 0, valueBytes.Length, valueBytes, 0);
+					sha1.TransformBlock(_recordSeparator, 0, _recordSeparator.Length, _recordSeparator, 0);
+				}
+
+				var fallbackSignatureBytes = _fallback != null ? _fallback.ComputeSignature() : new byte[0];
+				sha1.TransformFinalBlock(fallbackSignatureBytes, 0, fallbackSignatureBytes.Length);
+
+				return sha1.Hash;
 			}
-
-			var fallbackSignatureBytes = _fallback != null ? _fallback.ComputeSignature() : new byte[0];
-			sha1.TransformFinalBlock(fallbackSignatureBytes, 0, fallbackSignatureBytes.Length);
-
-			return sha1.Hash;
 		}
 
 		public void Add (string tag, string translation)
