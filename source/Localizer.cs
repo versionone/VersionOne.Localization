@@ -28,13 +28,14 @@ namespace VersionOne.Localization
 		private const char SeparatorChar = '\'';
 		private const char LeftBraceChar = '{';
 		private const char RightBraceChar = '}';
+		private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
 		private const string LeftBracePlaceholderString = "\x2";
 		private const char LeftBracePlaceholderChar = '\x2';
 		private const string RightBracePlaceholderString = "\x3";
 		private const char RightBracePlaceholderChar = '\x3';
-		private static readonly Regex rxEmbeddedTag = new Regex(@"\{([^{}]*)\}", RegexOptions.Compiled);
-		private static readonly Regex rxDoubleLeftBrace = new Regex(@"\{\{", RegexOptions.Compiled);
-		private static readonly Regex rxDoubleRightBrace = new Regex(@"\}\}", RegexOptions.RightToLeft | RegexOptions.Compiled);
+		private static readonly Regex rxEmbeddedTag = new Regex(@"\{([^{}]*)\}", RegexOptions.Compiled, RegexTimeout);
+		private static readonly Regex rxDoubleLeftBrace = new Regex(@"\{\{", RegexOptions.Compiled, RegexTimeout);
+		private static readonly Regex rxDoubleRightBrace = new Regex(@"\}\}", RegexOptions.RightToLeft | RegexOptions.Compiled, RegexTimeout);
 
 		private static string StripLiteralBraces (string input)
 		{
